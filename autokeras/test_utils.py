@@ -23,7 +23,6 @@ import autokeras as ak
 SEED = 5
 
 
-
 COLUMN_NAMES = [
     "sex",
     "age",
