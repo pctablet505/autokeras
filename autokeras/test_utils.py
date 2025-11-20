@@ -46,7 +46,6 @@ COLUMN_TYPES = {
     "alone": "categorical",
 }
 
-# Download Titanic dataset from OpenML and split into train/test
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 # Use pre-split CSVs stored under benchmark/datasets to avoid downloads and
 # processing at import time.
