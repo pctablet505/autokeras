@@ -14,19 +14,15 @@
 
 import inspect
 import os
-import ssl
-import urllib.request
 
 import keras
 import numpy as np
-import pandas as pd
 
 import autokeras as ak
 
 SEED = 5
 
-# Train/test split ratio
-TRAIN_SPLIT_RATIO = 0.8
+# (No split is performed here; use pre-split CSVs in benchmark/datasets.)
 
 COLUMN_NAMES = [
     "sex",
@@ -52,72 +48,11 @@ COLUMN_TYPES = {
 }
 
 # Download Titanic dataset from OpenML and split into train/test
-TITANIC_DATA_URL = "https://www.openml.org/data/get_csv/16826755/phpMYEkMl"
-
-_cache_dir = os.path.expanduser(os.path.join("~", ".keras", "datasets"))
-os.makedirs(_cache_dir, exist_ok=True)
-_titanic_data_path = os.path.join(_cache_dir, "titanic.csv")
-
-# Define paths for train/test splits
-TRAIN_CSV_PATH = os.path.join(_cache_dir, "titanic_train.csv")
-TEST_CSV_PATH = os.path.join(_cache_dir, "titanic_test.csv")
-
-# Only process dataset if train/test files don't exist
-if not (os.path.exists(TRAIN_CSV_PATH) and os.path.exists(TEST_CSV_PATH)):
-    # Download raw dataset if it doesn't exist
-    if not os.path.exists(_titanic_data_path):
-        # WARNING: Using unverified SSL context is a security risk.
-        # This is necessary only because some test environments have outdated
-        # or missing SSL certificates. In production code, SSL verification
-        # should always be enabled to prevent man-in-the-middle attacks.
-        # TODO: Remove this workaround once test environments have proper SSL
-        # certificate configuration.
-        ssl_context = ssl._create_unverified_context()
-        with urllib.request.urlopen(
-            TITANIC_DATA_URL, context=ssl_context
-        ) as response:
-            with open(_titanic_data_path, "wb") as out_file:
-                out_file.write(response.read())
-
-    # Load and preprocess the dataset to match expected format
-    _df = pd.read_csv(_titanic_data_path)
-
-    # Rename columns to match expected format
-    _df = _df.rename(
-        columns={
-            "pclass": "class",
-            "sibsp": "n_siblings_spouses",
-            "cabin": "deck",
-            "embarked": "embark_town",
-        }
-    )
-
-    # Create 'alone' column
-    _df["alone"] = (_df["n_siblings_spouses"] + _df["parch"] == 0).astype(str)
-
-    # Select only the columns we need in the expected order
-    _columns_to_keep = [
-        "sex",
-        "age",
-        "n_siblings_spouses",
-        "parch",
-        "fare",
-        "class",
-        "deck",
-        "embark_town",
-        "alone",
-        "survived",
-    ]
-    _df = _df[_columns_to_keep]
-
-    # Split into train and test
-    _train_size = int(len(_df) * TRAIN_SPLIT_RATIO)
-    _train_df = _df.iloc[:_train_size]
-    _test_df = _df.iloc[_train_size:]
-
-    # Save train and test splits
-    _train_df.to_csv(TRAIN_CSV_PATH, index=False)
-    _test_df.to_csv(TEST_CSV_PATH, index=False)
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+# Use pre-split CSVs stored under benchmark/datasets to avoid downloads and
+# processing at import time.
+TRAIN_CSV_PATH = os.path.join(ROOT_DIR, "benchmark", "datasets", "titanic_train.csv")
+TEST_CSV_PATH = os.path.join(ROOT_DIR, "benchmark", "datasets", "titanic_test.csv")
 
 
 def generate_data(num_instances=100, shape=(32, 32, 3)):
