@@ -49,8 +49,12 @@ COLUMN_TYPES = {
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 # Use pre-split CSVs stored under benchmark/datasets to avoid downloads and
 # processing at import time.
-TRAIN_CSV_PATH = os.path.join(ROOT_DIR, "benchmark", "datasets", "titanic_train.csv")
-TEST_CSV_PATH = os.path.join(ROOT_DIR, "benchmark", "datasets", "titanic_test.csv")
+TRAIN_CSV_PATH = os.path.join(
+    ROOT_DIR, "benchmark", "datasets", "titanic_train.csv"
+)
+TEST_CSV_PATH = os.path.join(
+    ROOT_DIR, "benchmark", "datasets", "titanic_test.csv"
+)
 
 
 def generate_data(num_instances=100, shape=(32, 32, 3)):
