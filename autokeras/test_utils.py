@@ -22,7 +22,7 @@ import autokeras as ak
 
 SEED = 5
 
-# (No split is performed here; use pre-split CSVs in benchmark/datasets.)
+
 
 COLUMN_NAMES = [
     "sex",
